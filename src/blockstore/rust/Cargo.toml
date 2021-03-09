@@ -14,12 +14,14 @@ log = "^0.4.13"
 rand = "^0.8.1"
 # TODO current release sodiumoxide 0.2.6 doesn't have aes yet, use current master
 aead = "^0.3.2"
+chacha20poly1305 = "^0.7.1"
 cipher = "^0.2.5"
+itertools = "^0.10.0"
 region = "^2.2.0"
 ring = "^0.16.19"
 sodiumoxide = {git = "https://github.com/sodiumoxide/sodiumoxide", rev = "9f6a18d40a4db253edfebac9f2ce5c22d09b1f47"}
-sysinfo = "^0.15.5"
-chacha20poly1305 = "^0.7.1"
+static_assertions = "^1.1.0"
+sysinfo = "^0.16.4"
 
 [build-dependencies]
 cxx-build = "^1.0.27"

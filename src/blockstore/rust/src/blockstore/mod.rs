@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-pub use cppbridge::BlockId;
+pub use cppbridge::{BLOCKID_LEN, BlockId};
 
 pub trait BlockStore2 {
   fn try_create(&self, id: &BlockId, data: &[u8]) -> Result<bool>;
@@ -17,3 +17,4 @@ pub trait BlockStore2 {
 mod cppbridge;
 mod encrypted;
 mod inmemory;
+mod ondisk;

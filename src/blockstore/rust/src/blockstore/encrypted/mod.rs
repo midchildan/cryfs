@@ -1,5 +1,4 @@
 use anyhow::{anyhow, Result};
-use sysinfo::{System, SystemExt};
 
 use super::{BlockId, BlockStore2};
 

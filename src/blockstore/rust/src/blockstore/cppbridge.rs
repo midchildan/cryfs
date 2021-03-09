@@ -2,15 +2,17 @@ use anyhow::{bail, Result};
 use rand::{thread_rng, Rng};
 use std::fmt::{write, Display, Formatter};
 use std::hash::{Hash, Hasher};
+use std::path::Path;
 
 use super::{
     encrypted::EncryptedBlockStore,
     inmemory::InMemoryBlockStore,
+    ondisk::OnDiskBlockStore,
     BlockStore2,
 };
 use crate::crypto::symmetric::{Cipher, Aes256Gcm, EncryptionKey};
 
-const BLOCKID_LEN: usize = 16;
+pub const BLOCKID_LEN: usize = 16;
 
 #[cxx::bridge]
 mod ffi {
@@ -41,6 +43,7 @@ mod ffi {
 
         fn new_inmemory_blockstore() -> Box<RustBlockStore2Bridge>;
         fn new_encrypted_inmemory_blockstore() -> Box<RustBlockStore2Bridge>;
+        fn new_ondisk_blockstore(basedir: &str) -> Box<RustBlockStore2Bridge>;
     }
 }
 
@@ -55,8 +58,19 @@ impl BlockId {
         rng.fill(&mut result.id);
         result
     }
+    pub fn from_data(id_data: &[u8]) -> Self {
+        let mut id = [0; BLOCKID_LEN]; // TODO Is there a way to do this without pre-zeroing?
+        id.copy_from_slice(id_data);
+        Self {id }
+    }
     pub fn data(&self) -> &[u8; BLOCKID_LEN] {
         &self.id
+    }
+    pub fn from_hex(hex_data: &str) -> Result<Self> {
+        Ok(Self::from_data(&hex::decode(hex_data)?))
+    }
+    pub fn to_hex(&self) -> String {
+        hex::encode_upper(self.data())
     }
 }
 
@@ -114,4 +128,8 @@ fn new_encrypted_inmemory_blockstore() -> Box<RustBlockStore2Bridge> {
         InMemoryBlockStore::new(),
         Aes256Gcm::new(key),
     ))))
+}
+
+fn new_ondisk_blockstore(basedir: &str) -> Box<RustBlockStore2Bridge> {
+    Box::new(RustBlockStore2Bridge(Box::new(OnDiskBlockStore::new(Path::new(basedir).to_path_buf()))))
 }

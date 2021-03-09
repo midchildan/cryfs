@@ -47,7 +47,7 @@ mod enc_dec {
         let dec_cipher = Dec::new(key(1));
         let plaintext = hex::decode("0ffc9a43e15ccfbef1b0880167df335677c9005948eeadb31f89b06b90a364ad03c6b0859652dca960f8fa60c75747c4f0a67f50f5b85b800468559ea1a816173c0abaf5df8f02978a54b250bc57c7c6a55d4d245014722c0b1764718a6d5ca654976370").unwrap();
         let mut ciphertext = enc_cipher.encrypt(&plaintext).unwrap();
-        ciphertext[20] += 1;
+        ciphertext[20] ^= 1;
         let decrypted_plaintext = dec_cipher.decrypt(&ciphertext);
         assert!(decrypted_plaintext.is_err());
     }
